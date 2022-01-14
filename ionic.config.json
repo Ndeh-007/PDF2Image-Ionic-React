@@ -1,0 +1,7 @@
+{
+  "name": "ReactPDF-Img",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
