@@ -61,7 +61,7 @@ const Home4: React.FC = () => {
       function getPage() {
         pdf.getPage(currentPage).then((page) => {
           //   console.log("Printing " + currentPage);
-          // vary scale for clarity of text. Use for 3 for optimum results. 
+          // vary scale for clarity of text. Use 3 for optimum results. 
           // further testing may prove to yield better results
           var viewport = page.getViewport({ scale: 3 });
           var canvas = document?.createElement("canvas"),
