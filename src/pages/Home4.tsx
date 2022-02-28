@@ -9,16 +9,17 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import React, { useRef, useState } from "react";
+import React, {  useState } from "react";
 import { storage } from "../Firebase/Firebase";
 import * as pdfjs from "pdfjs-dist";
 import "./Home.css";
+import { convertPDFtoImg } from "../Functions/convert";
 
 const Home4: React.FC = () => {
   const [docImages, setDocImages] = useState<any[]>([]);
   const [showLoading, setShowLoading] = useState(false);
 
-  let paths = ["files/sample.pdf", "files/FE18A097.pdf"];
+  let paths = ["files/sample.pdf", "files/FE18A097.pdf","files/2013_189840.pdf"];
 
   var pages: any = [],
     heights: number[] = [],
@@ -32,9 +33,8 @@ const Home4: React.FC = () => {
     canvas.width = width;
     canvas.height = height;
     for (var i = 0; i < pages.length; i++) {
-      ctx?.putImageData(pages[i], 0, heights[i]);
-    }
-    // canvasHolder.current?.appendChild(canvas)
+      ctx?.putImageData(pages[i], 0, heights[i]); 
+    } 
     document.body.appendChild(canvas);
   }
 
@@ -43,7 +43,14 @@ const Home4: React.FC = () => {
       .ref(paths[index])
       .getDownloadURL()
       .then((url) => {
-        convertPDF(url);
+        // console.log(url)
+        // convertPDF(url);
+          convertPDFtoImg(url).then((res:any)=>{
+          // console.log("completed")
+          console.log(res)
+          setDocImages(res);
+          setShowLoading(false)
+        });
       })
       .catch((e) => {
         console.error(e);
@@ -61,7 +68,7 @@ const Home4: React.FC = () => {
       function getPage() {
         pdf.getPage(currentPage).then((page) => {
           //   console.log("Printing " + currentPage);
-          // varry scale for clarity of text. Use for optimum values
+          // vary scale for clarity of text. Use for optimum values
           var viewport = page.getViewport({ scale: 3 });
           var canvas = document?.createElement("canvas"),
             ctx = canvas?.getContext("2d");
@@ -101,23 +108,6 @@ const Home4: React.FC = () => {
         <IonToolbar>
           <IonTitle>PDF from Firebase</IonTitle>
         </IonToolbar>
-        {showLoading ? (
-          <IonProgressBar type="indeterminate"></IonProgressBar>
-        ) : (
-          " "
-        )}
-      </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">PDF from Firebase</IonTitle>
-          </IonToolbar>{" "}
-          {showLoading ? (
-            <IonProgressBar type="indeterminate"></IonProgressBar>
-          ) : (
-            " "
-          )}
-        </IonHeader>
         <IonButton
           onClick={() => {
             setShowLoading(true);
@@ -133,9 +123,24 @@ const Home4: React.FC = () => {
           }}
         >
           Fetch 2
-        </IonButton>
+        </IonButton> 
+        <IonButton
+          onClick={() => {
+            setShowLoading(true);
+            getURL(2);
+          }}
+        >
+          Fetch 3
+        </IonButton> 
+        {showLoading ? (
+          <IonProgressBar type="indeterminate"></IonProgressBar>
+        ) : (
+          " "
+        )}
+      </IonHeader>
+      <IonContent fullscreen> 
         {/* <div ref={canvasHolder}></div> */}
-        {docImages.map((image: string, index) => {
+        {docImages.map((image: string, index) => { 
           return (
             <IonCard key={index}>
               <IonImg src={image}></IonImg>
